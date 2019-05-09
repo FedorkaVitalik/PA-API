@@ -1,3 +1,5 @@
 module.exports = {
-  User: 'user'
+  Post: 'post',
+  User: 'user',
+  Comment: 'comment'
 };
