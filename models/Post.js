@@ -17,6 +17,9 @@ const PostSchema = new Schema({
   },
   date: {
     type: Date
+  },
+  countOfLikes: {
+    type: []
   }
 });
 
