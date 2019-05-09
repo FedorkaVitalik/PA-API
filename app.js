@@ -8,6 +8,7 @@ const config = require('./config');
 
 const signup = require('./routes/signup');
 const login = require('./routes/login');
+const logout = require('./routes/logout');
 
 const post = require('./routes/post');
 const comment = require('./routes/comment');
@@ -53,6 +54,7 @@ app.use(logger('dev'));
 
 router.use('/api', signup());
 router.use('/api', login());
+router.use('/api', logout());
 
 router.use('/api', post());
 router.use('/api', comment());
