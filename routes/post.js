@@ -97,12 +97,7 @@ module.exports = function () {
     const { id } = req.params;
     const _id = ObjectId(id);
 
-    const post = await Post.findById({ _id });
-
-    if (!post) {
-      throw new CustomError(errorMessages.NOT_FOUND('Post'), 404);
-    }
-    await Post.deleteOne({ _id });
+    await Post.findByIdAndDelete({ _id });
 
     res.status(200).json('Deleted');
   });

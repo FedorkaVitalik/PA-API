@@ -40,6 +40,9 @@ const UserSchema = new Schema({
   accessRole: {
     type: Array,
     default: [2]
+  },
+  isBlocked: {
+    type: Boolean
   }
 });
 

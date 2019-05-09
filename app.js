@@ -10,6 +10,7 @@ const signup = require('./routes/signup');
 const login = require('./routes/login');
 
 const post = require('./routes/post');
+const comment = require('./routes/comment');
 
 /* eslint-disable global-require */
 require('express-async-errors');
@@ -53,6 +54,7 @@ router.use('/api', signup());
 router.use('/api', login());
 
 router.use('/api', post());
+router.use('/api', comment());
 
 router.use((err, req, res, next) => {
   console.error(err.stack);
