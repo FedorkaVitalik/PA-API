@@ -4,14 +4,17 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 
-const urlencodedParser = bodyParser.urlencoded({
-  extended: false
-});
-
 const config = require('./config');
+
+const signup = require('./routes/signup');
+const login = require('./routes/login');
 
 /* eslint-disable global-require */
 require('express-async-errors');
+
+const urlencodedParser = bodyParser.urlencoded({
+  extended: false
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -43,6 +46,9 @@ app.use((req, res, next) => {
 });
 
 app.use(logger('dev'));
+
+router.use('/api', signup());
+router.use('/api', login());
 
 router.use((err, req, res, next) => {
   console.error(err.stack);
