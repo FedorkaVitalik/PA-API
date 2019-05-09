@@ -11,6 +11,7 @@ const login = require('./routes/login');
 
 const post = require('./routes/post');
 const comment = require('./routes/comment');
+const follow = require('./routes/follow');
 
 /* eslint-disable global-require */
 require('express-async-errors');
@@ -55,6 +56,7 @@ router.use('/api', login());
 
 router.use('/api', post());
 router.use('/api', comment());
+router.use('/api', follow());
 
 router.use((err, req, res, next) => {
   console.error(err.stack);

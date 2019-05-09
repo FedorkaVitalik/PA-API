@@ -43,6 +43,15 @@ const UserSchema = new Schema({
   },
   isBlocked: {
     type: Boolean
+  },
+  following: {
+    type: []
+  },
+  followers: {
+    type: []
+  },
+  news: {
+    type: []
   }
 });
 
