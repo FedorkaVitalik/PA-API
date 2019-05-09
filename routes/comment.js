@@ -93,15 +93,21 @@ module.exports = function () {
 
     const date = new Date(Date.now()).toString();
 
-    await Comment.findByIdAndUpdate(
-      { _id },
-      {
-        date,
-        text
-      }
-    );
+    const comment = await Comment.findById({ _id });
 
-    res.status(200).json('success');
+    if (comment.author.equals(req.userId) || req.accessRole.includes(1)) {
+      await Comment.findByIdAndUpdate(
+        { _id },
+        {
+          date,
+          text
+        }
+      );
+
+      res.status(200).json('success');
+    } else {
+      throw new CustomError(errorMessages.ACCESS_CLOSED, 403);
+    }
   });
 
   router.get('/myComments', async (req, res) => {
@@ -137,9 +143,14 @@ module.exports = function () {
     const { commentId } = req.params;
     const _id = ObjectId(commentId);
 
-    await Comment.findByIdAndDelete({ _id });
+    const comment = await Comment.findById({ _id });
 
-    res.status(200).json('Deleted');
+    if (comment.author.equals(req.userId) || req.accessRole.includes(1)) {
+      await Comment.findByIdAndDelete({ _id });
+      res.status(200).json('Deleted');
+    } else {
+      throw new CustomError(errorMessages.ACCESS_CLOSED, 403);
+    }
   });
 
   return router;

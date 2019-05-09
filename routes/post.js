@@ -97,9 +97,14 @@ module.exports = function () {
     const { id } = req.params;
     const _id = ObjectId(id);
 
-    await Post.findByIdAndDelete({ _id });
+    const post = await Post.findById({ _id });
 
-    res.status(200).json('Deleted');
+    if (post.createdBy.equals(req.userId) || req.accessRole.includes(1)) {
+      await Post.findByIdAndDelete({ _id });
+      res.status(200).json('Deleted');
+    } else {
+      throw new CustomError(errorMessages.ACCESS_CLOSED, 403);
+    }
   });
 
   router.get('/posts', async (req, res) => {
