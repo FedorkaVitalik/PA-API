@@ -1,12 +1,12 @@
+/* eslint-disable no-console */
 const mongoose = require('mongoose');
 
 const config = require('../config');
-const createAdmin = require('../utils/createAdmin');
 
-mongoose.connect(config.mongoURI).then(() => {
-  // eslint-disable-next-line no-console
-  console.log('Connected to Mongodb');
-  createAdmin();
-});
+mongoose.connect(
+  config.mongoURI,
+  { useNewUrlParser: true }
+);
+mongoose.set('useCreateIndex', true);
 
 module.exports = mongoose;

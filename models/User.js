@@ -1,6 +1,7 @@
 const mongoose = require('../utils/mongoose.js');
 
 const collectionNames = require('../constants/collections.js');
+const createAdmin = require('../utils/createAdmin');
 
 const { Schema } = mongoose;
 
@@ -43,5 +44,7 @@ const UserSchema = new Schema({
 });
 
 const User = mongoose.model(collectionNames.User, UserSchema);
+
+createAdmin(User);
 
 module.exports = User;
