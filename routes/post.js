@@ -107,11 +107,35 @@ module.exports = function () {
       },
       {
         $addToSet: {
-          countOfLikes: req.userId
+          countOfLikes: user._id
         }
       }
     );
     res.status(200).json('Liked');
+  });
+
+  router.patch('/posts/unlikePost/:id', async (req, res) => {
+    const { id } = req.params;
+
+    const user = await User.findById({ _id: req.userId });
+
+    if (user.isBlocked === true) {
+      throw new CustomError(errorMessages.ACCESS_CLOSED, 400);
+    }
+    const postId = ObjectId(id);
+
+    await Post.findByIdAndUpdate(
+      {
+        _id: postId
+      },
+      {
+        $pull: {
+          countOfLikes: user._id
+        }
+      },
+      { safe: true, upsert: true }
+    );
+    res.status(200).json('Unliked');
   });
 
   router.delete('/posts/:id', async (req, res) => {
