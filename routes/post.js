@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
@@ -33,13 +34,17 @@ module.exports = function () {
 
     const date = new Date(Date.now()).toString();
 
-    await Post.create({
+    const justCtreatedPost = await Post.create({
       title,
       body,
       createdBy: user._id,
       date,
       countOfLikes: []
     });
+
+    const newPost = await Post.findById({
+      _id: justCtreatedPost._id
+    }).populate('createdBy', 'fname lname');
 
     if (user.followers) {
       for (const followerId of user.followers) {
@@ -49,8 +54,6 @@ module.exports = function () {
           subjects.NEW_POST,
           messages.NEW_POST
         );
-
-        const newPost = await Post.findOne({ title });
 
         try {
           await jwt.verify(follower.token, config.secretToken);
@@ -67,12 +70,7 @@ module.exports = function () {
       }
     }
 
-    res.status(201).json({
-      title,
-      body,
-      createdBy: user._id,
-      date
-    });
+    res.status(201).json(newPost);
   });
 
   router.put('/posts/:id', async (req, res) => {
@@ -93,6 +91,29 @@ module.exports = function () {
     res.status(200).json('Success');
   });
 
+  router.patch('/posts/likePost/:id', async (req, res) => {
+    const { id } = req.params;
+
+    const user = await User.findById({ _id: req.userId });
+
+    if (user.isBlocked === true) {
+      throw new CustomError(errorMessages.ACCESS_CLOSED, 400);
+    }
+    const postId = ObjectId(id);
+
+    await Post.findByIdAndUpdate(
+      {
+        _id: postId
+      },
+      {
+        $addToSet: {
+          countOfLikes: req.userId
+        }
+      }
+    );
+    res.status(200).json('Liked');
+  });
+
   router.delete('/posts/:id', async (req, res) => {
     const { id } = req.params;
     const _id = ObjectId(id);
@@ -107,12 +128,34 @@ module.exports = function () {
     }
   });
 
-  router.get('/posts', async (req, res) => {
+  router.get('/myPosts', async (req, res) => {
     const filter = req.accessRole.includes(1) ? {} : { createdBy: req.userId };
 
-    const posts = await Post.find(filter);
+    await Post.find(filter)
+      .populate('createdBy', 'fname lname')
+      .exec((err, posts) => {
+        if (err) {
+          // eslint-disable-next-line indent
+          console.error(err);
+        }
+        res.status(200).json(posts);
+      });
+  });
 
-    res.status(200).json(posts);
+  router.get('/posts', async (req, res) => {
+    const user = await User.findById({ _id: req.userId });
+
+    const { following } = user;
+
+    await Post.find({ createdBy: { $in: [...following, req.userId] } })
+      .populate('createdBy', 'fname lname')
+      .exec((err, posts) => {
+        if (err) {
+          // eslint-disable-next-line indent
+          console.error(err);
+        }
+        res.status(200).json(posts);
+      });
   });
 
   router.get('/posts/:id', async (req, res) => {

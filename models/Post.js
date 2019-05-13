@@ -13,13 +13,15 @@ const PostSchema = new Schema({
   },
   createdBy: {
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'user'
   },
   date: {
     type: Date
   },
   countOfLikes: {
-    type: []
+    type: [],
+    default: []
   }
 });
 
