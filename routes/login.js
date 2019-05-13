@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable func-names */
 const express = require('express');
@@ -33,7 +32,6 @@ module.exports = function () {
       user.password
     );
     if (!passwordIsValid) {
-      console.log(password, user.password);
       throw new CustomError(errorMessages.NOT_VALID('password'), 400);
     }
     const token = await securityHelper.createToken(user._id);

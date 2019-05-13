@@ -13,7 +13,7 @@ module.exports.createHash = async function (password) {
     const hash = await bcrypt.hash(password, saltRounds);
     return hash;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

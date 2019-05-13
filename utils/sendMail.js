@@ -19,7 +19,7 @@ module.exports.sendOne = function (email, subject, text) {
   };
 
   return transporter.sendMail(mailOptions, (err, info) => {
-    if (err) console.log(err);
+    if (err) console.error(err);
     else console.log(info);
   });
 };
